@@ -41,7 +41,7 @@ public:
 
     // Удаляет запись по ключу key.
     // Возвращает true если запись была удалена. Если ключа не было до удаления, то вернет false.
-    // O(1)* благодаря хеш-таблице для поиска + O(log n) для удаления из map (но в std::map erase по итератору - O(1)* амортизированно)
+    // O(1)* благодаря хеш-таблице в std::map erase по итератору - O(1)* амортизированно
     bool remove(const std::string_view key) {
         auto it = key_to_storage_iter_.find(key);
         if (it == key_to_storage_iter_.end()) {
