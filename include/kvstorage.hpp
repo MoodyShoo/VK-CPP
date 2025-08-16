@@ -78,7 +78,7 @@ public:
         auto now = clock_.now();
         std::vector<std::pair<std::string, std::string>> result;
 
-        if (count < 1) {
+        if (count == 0) {
             return result;
         }
 
@@ -148,4 +148,5 @@ private:
     // и 8 байт под итератор std::map (указатель на узел)
     // Я использовал string_view для доступа к map, но понимаю риск висячих указателей - в проде это бы заменил на std::string или ref_wrapper. Здесь - ради производительности и читаемости
     std::unordered_map<std::string_view, StorageIterator> key_to_storage_iter_;
+    std::multimap<TimePoint, StorageIterator> ttl_to_storage_iter_;
 };
