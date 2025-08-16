@@ -20,6 +20,7 @@ VK-CPP/
 │ └── kvstorage.hpp # Основная реализация
 ├── tests/
 │ └── kvstorage_tests.cpp # Тесты с использованием GoogleTest
+│ └── kvstorage_perf_test.cpp 
 ├── extern/
 │ └── googletest/ # Подмодуль GoogleTest
 ├── CMakeLists.txt
