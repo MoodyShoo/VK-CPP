@@ -19,7 +19,7 @@ public:
     // Инициализирует хранилище переданными множеством записей. Размер span может быть очень большим.
     // Также принимает абстракцию часов (Clock) для возможности управления временем в тестах.
     explicit KVStorage(
-        std::span<std::tuple<std::string /* key */, std::string /* value */, uint32_t /* ttl */>> entries, Clock& clock = Clock())
+        std::span<std::tuple<std::string /* key */, std::string /* value */, uint32_t /* ttl */>> entries, Clock& clock)
             : clock_(clock) {
         // O(n log n) - где n - кол-во записей в span entries
         for (const auto& [key, value, ttl] : entries) {
@@ -104,6 +104,7 @@ public:
         for (const auto& [key, entry] : storage_) {
             if (entry.expire_time <= now) {
                 auto expired = std::make_pair(key, entry.value);
+                key_to_storage_iter_.erase(key);
                 storage_.erase(key);
 
                 return expired;
@@ -145,7 +146,7 @@ private:
     std::map<std::string /* key */, Entry /* value, ttl*/, TransparentLess> storage_;
     // Дополнительная хеш-таблица для доступа к элементам storage_ за O(1)*
     // Требуется примерно 24 байта на запись: 16 байт под string_view (указатель + длина)
-    // и 8 байт под итератор std::map (указатель на узел)
+    // и 8 байт под итератор std::map (указатель на узел). Не знаю считаются ли реализации контейнеров за оверхед или нет
     // Я использовал string_view для доступа к map, но понимаю риск висячих указателей - в проде это бы заменил на std::string или ref_wrapper. Здесь - ради производительности и читаемости
     std::unordered_map<std::string_view, StorageIterator> key_to_storage_iter_;
 };
