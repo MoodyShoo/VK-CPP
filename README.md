@@ -9,6 +9,7 @@
 - Получение отсортированных записей (`getManySorted`)
 - Удаление одной просроченной записи (`removeOneExpiredEntry`)
 - Написано с поддержкой тестирования (GoogleTest)
+- Производительность проверена на миллион записей
 
 ## Структура проекта
 
@@ -36,7 +37,7 @@ cd VK-CPP
 
 ### 1. Сборка через CMake
 
-```bash
+```powershell
 mkdir build
 cd build
 cmake ..
@@ -51,8 +52,27 @@ cmake --build .
 
 или с помощью ctest
 
-```bash
+```powershell
 ctest -V
+```
+
+- Тесты производительности выделены меткой performance и запускаются отдельно:
+
+```powershell
+ctest -L performance -V
+```
+
+- Для запуска юнит-тестов:
+
+```powershell
+ctest -L unit -V
+```
+
+### Пример вывода производительности
+
+```powershell
+[InsertMillionEntries] Duration: 2200 ms
+[ReadRandomEntries] Duration: 6 ms
 ```
 
 ## Примечания
