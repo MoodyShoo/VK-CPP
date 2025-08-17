@@ -61,7 +61,7 @@ public:
         if (it != key_to_storage_iter_.end()) {
             const auto& [key, entry] = *it->second;
 
-            if (entry.expire_time > clock_.now()) {
+            if (IsAlive(entry, clock_.now())) {
                 return entry.value;
             }
         }
@@ -85,7 +85,7 @@ public:
         result.reserve(count);
 
         for (auto it = storage_.lower_bound(key); it != storage_.end() && result.size() < count; ++it) {
-            if (it->second.expire_time > now) {
+            if (IsAlive(it->second, now)) {
                 result.push_back({it->first, it->second.value});
             }
         }
@@ -103,7 +103,7 @@ public:
         auto now = clock_.now();
 
         for (const auto& [key, entry] : storage_) {
-            if (entry.expire_time <= now) {
+            if (IsExpired(entry, now)) {
                 auto expired = std::make_pair(key, entry.value);
                 key_to_storage_iter_.erase(key);
                 storage_.erase(key);
@@ -120,6 +120,14 @@ private:
         std::string value; // sizeof(value);
         TimePoint expire_time; // ~8 байт;
     };
+
+    bool IsExpired(const Entry& entry, TimePoint now) const noexcept {
+        return entry.expire_time <= now;
+    }
+
+    bool IsAlive(const Entry& entry, TimePoint now) const noexcept {
+        return entry.expire_time > now;
+    }
 
     // Компаратор для сравнения string_view и string, чтобы не создавать временные строки в методах мапы
     struct TransparentLess {
