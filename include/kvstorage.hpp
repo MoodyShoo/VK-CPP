@@ -155,7 +155,6 @@ private:
     std::map<std::string /* key */, Entry /* value, ttl*/, TransparentLess> storage_;
     // Дополнительная хеш-таблица для доступа к элементам storage_ за O(1)*
     // Требуется примерно 24 байта на запись: 16 байт под string_view (указатель + длина)
-    // и 8 байт под итератор std::map (указатель на узел). Не знаю считаются ли реализации контейнеров за оверхед или нет
-    // Я использовал string_view для доступа к map, но понимаю риск висячих указателей - в проде это бы заменил на std::string или ref_wrapper. Здесь - ради производительности и читаемости
-    std::unordered_map<std::string_view, StorageIterator> key_to_storage_iter_;
+
+    std::unordered_map<std::string, StorageIterator> key_to_storage_iter_;
 };
